@@ -1,0 +1,119 @@
+Imports System
+Imports System.Drawing
+Imports System.Windows.Forms 
+Public Class Form1
+Inherits System.Windows.Forms.Form
+Private buttonPanel As New Panel
+Private WithEvents KontakDataGridView As New DataGridView
+Private WithEvents addNewRowButton As New Button
+Private WithEvents deleteRowButton As New Button
+
+Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+  Tampilan_Form()
+  Tentukan_DataGrid()
+  Populasi_Data()
+End Sub
+
+Private Sub KontakDataGridView_CellFormatting(ByVal sender As Object, _
+ByVal e As System.Windows.Forms.DataGridViewCellFormattingEventArgs) _
+Handles KontakDataGridView.CellFormatting
+If e IsNot Nothing Then
+    If Me.KontakDataGridView.Columns(e.ColumnIndex).Name = _
+        "Nama Lengkap" Then
+        If e.Value IsNot Nothing Then
+           Try
+               e.Value = DateTime.Parse(e.Value.ToString()) _
+             . ToLongDateString()
+               e.FormattingApplied = True
+           Catch ex As FormatException
+               Console.WriteLine("{0} Penulisan nama tidak benar.", e.Value.ToString())
+           End Try
+        End If
+      End If
+    End If
+End Sub
+
+Private Sub addNewRowButton_Click(ByVal sender As Object, ByVal e As EventArgs) Handles addNewRowButton.Click
+    Me.KontakDataGridView.Rows.Add()
+End Sub
+
+Private Sub deleteRowButton_Click(ByVal sender As Object, ByVal e As EventArgs) Handles deleteRowButton.Click
+   If Me.KontakDataGridView.SelectedRows.Count > 0 AndAlso Not Me.KontakDataGridView.SelectedRows(0).Index = _
+      Me.KontakDataGridView.Rows.Count - 1 Then
+         Me.KontakDataGridView.Rows.RemoveAt(Me.KontakDataGridView.SelectedRows(0).Index)
+   End If
+End Sub
+
+Private Sub Tampilan_Form()
+   Me.Size = New Size(600, 500)
+   With addNewRowButton
+    .Text = "Tambah Baris"
+    .Location = New Point(10, 10)
+   End With
+   With deleteRowButton
+    .Text = "Hapus Baris"
+    .Location = New Point(100, 10)
+   End With
+   With buttonPanel
+   .Controls.Add(addNewRowButton)
+   .Controls.Add(deleteRowButton)
+   .Height = 50
+   .Dock = DockStyle.Bottom
+   End With
+   Me.Controls.Add(Me.buttonPanel)
+End Sub
+
+Private Sub Tentukan_Datagrid()
+Me.Controls.Add(KontakDataGridView)
+KontakDataGridView.ColumnCount = 3
+With KontakDataGridView.ColumnHeadersDefaultCellStyle
+   .BackColor = Color.Navy
+   .ForeColor = Color.White
+   .Font = New Font(KontakDataGridView.Font, FontStyle.Bold)
+End With
+With KontakDataGridView
+   .Name = "KontakDataGridView"
+   .Location = New Point(8, 8)
+   .Size = New Size(500, 250)
+   .AutoSizeRowsMode = _
+    DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders
+   .ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single
+   .CellBorderStyle = DataGridViewCellBorderStyle.Single
+   .GridColor = Color.Black
+   .RowHeadersVisible = False
+   .Columns(0).Name = "Nama Lengkap"
+   .Columns(1).Name = "Alamat"
+   .Columns(2).Name = "No.Phone"
+   .Columns(2).DefaultCellStyle.Font = _
+    New Font(Me.KontakDataGridView.DefaultCellStyle.Font, FontStyle.Italic)
+   .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+   .MultiSelect = False
+   .Dock = DockStyle.Fill
+End With
+End Sub
+
+Private Sub Populasi_data()
+Dim row0 As String() = {"Dadang", "Jalaksana", "01234567890"}
+Dim row1 As String() = {"Dedeng", "Jeleksene", "11111111111"}
+Dim row2 As String() = {"Diding", "Jiliksini", "22222222222"}
+Dim row3 As String() = {"Dodong", "Joloksono", "33333333333"}
+Dim row4 As String() = {"Dudung", "Juluksunu", "44444444444"}
+With Me.KontakDataGridView.Rows
+.Add(row0)
+.Add(row1)
+.Add(row2)
+.Add(row3)
+.Add(row4)
+End With
+With Me.KontakDataGridView
+.Columns(0).DisplayIndex = 0
+.Columns(1).DisplayIndex = 1
+.Columns(2).DisplayIndex = 2
+End With
+End Sub 
+
+Public Shared Sub Main()
+  Application.EnableVisualStyles()
+  Application.Run(New Form1())
+End Sub
+End Class
